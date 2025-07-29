@@ -1,0 +1,6 @@
+#from Spring Boot 2.7.0, all autoconfiguration classes should be declared in this file
+com.zhanghongshen.common.exception.ExceptionCatch
+com.zhanghongshen.common.configuartion.JacksonConfiguration
+com.zhanghongshen.common.cache.CacheService
+com.zhanghongshen.common.lock.impl.RedisLock
+com.zhanghongshen.common.lock.DistributedLockTemplate

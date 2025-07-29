@@ -1,0 +1,37 @@
+{
+  "groups": [
+    {
+      "name": "spring.minio",
+      "type": "org.springframework.minio.config.MinIOConfigProperties",
+      "sourceType": "org.springframework.minio.config.MinIOConfigProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "spring.minio.access-key",
+      "type": "java.lang.String",
+      "sourceType": "org.springframework.minio.config.MinIOConfigProperties"
+    },
+    {
+      "name": "spring.minio.bucket",
+      "type": "java.lang.String",
+      "sourceType": "org.springframework.minio.config.MinIOConfigProperties"
+    },
+    {
+      "name": "spring.minio.endpoint",
+      "type": "java.lang.String",
+      "sourceType": "org.springframework.minio.config.MinIOConfigProperties"
+    },
+    {
+      "name": "spring.minio.read-path",
+      "type": "java.lang.String",
+      "sourceType": "org.springframework.minio.config.MinIOConfigProperties"
+    },
+    {
+      "name": "spring.minio.secret-key",
+      "type": "java.lang.String",
+      "sourceType": "org.springframework.minio.config.MinIOConfigProperties"
+    }
+  ],
+  "hints": []
+}

@@ -1,0 +1,144 @@
+x-common_settings: &common_settings
+  networks:
+    - leadnews
+  restart: always
+
+networks:
+  leadnews:
+    driver: bridge
+
+services:
+  nginx:
+    <<: *common_settings
+    container_name: nginx
+    image: nginx
+    ports:
+      - 8801:8801
+      - 8802:8802
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/leadnews.conf:/etc/nginx/leadnews.conf:ro
+      - ./fronted:/usr/share/nginx/html
+
+  nacos:
+    <<: *common_settings
+    container_name: nacos
+    image: nacos/nacos-server:v2.4.0
+    env_file:
+      - ./env/nacos.env
+    volumes:
+      - /var/lib/nacos/logs:/home/nacos/logs
+      - /var/lib/nacos/config:/home/nacos/data/config-data
+      - /var/lib/nacos/naming:/home/nacos/data/naming/data
+    ports:
+      - 7848:7848
+      - 8848:8848
+      - 9848:9848
+      - 9849:9849
+
+
+  minio:
+    <<: *common_settings
+    container_name: minio
+    image: minio/minio:RELEASE.2024-10-13T13-34-11Z
+    env_file:
+      - ./env/minio.env
+    volumes:
+      - /var/lib/minio/data:/data
+    ports:
+      - 9000:9000
+      - 9001:9001
+    command: [ "server", "/data", "--console-address", ":9001" ]
+
+  mysql:
+    <<: *common_settings
+    container_name: mysql
+    image: mysql:8.0
+    env_file:
+      - ./env/mysql.env
+    volumes:
+      - /var/lib/mysql/data:/var/lib/mysql
+      - /var/lib/mysql/log:/var/log/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+
+  redis:
+    <<: *common_settings
+    container_name: redis
+    image: redis:7.0
+    ports:
+      - 6379:6379
+    volumes:
+      - /var/lib/redis/data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server",
+              "/usr/local/etc/redis/redis.conf"]
+
+  zookeeper:
+    <<: *common_settings
+    container_name: zookeeper
+    image: zookeeper
+    ports:
+      - 2181:2181
+    volumes:
+      - /var/lib/zookeeper/data:/data
+      - /var/lib/zookeeper/log:/datalog
+
+  mongo:
+    <<: *common_settings
+    container_name: mongo
+    image: mongo
+    env_file:
+      - ./env/mongo.env
+    volumes:
+      - /var/lib/mongo/data:/data
+    ports:
+      - 27017:27017
+
+  kafka:
+    <<: *common_settings
+    hostname: kafka
+    container_name: kafka
+    image: apache/kafka:3.9.0
+    env_file:
+      - ./env/kafka.env
+    ports:
+      - 9092:9092
+
+  kafka-ui:
+    <<: *common_settings
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui
+    ports:
+      - 8080:8080
+    depends_on:
+      - kafka
+    environment:
+      DYNAMIC_CONFIG_ENABLED: true
+    volumes:
+      - ./kafkaui/config.yaml:/etc/kafkaui/dynamic_config.yaml
+
+  elasticsearch:
+    <<: *common_settings
+    container_name: elasticsearch
+    image: elasticsearch:7.17.0
+    env_file:
+      - ./env/elasticsearch.env
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins
+    mem_limit: 1073741824
+    ports:
+      - 9200:9200
+
+  kibana:
+    <<: *common_settings
+    container_name: kibana
+    image: kibana:7.17.0
+    mem_limit: 1073741824
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch

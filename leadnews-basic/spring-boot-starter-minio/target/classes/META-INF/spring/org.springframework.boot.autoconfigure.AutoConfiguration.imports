@@ -1,0 +1,2 @@
+#from Spring Boot 2.7.0, all autoconfiguration classes should be declared in this file
+org.springframework.minio.MinioTemplate
